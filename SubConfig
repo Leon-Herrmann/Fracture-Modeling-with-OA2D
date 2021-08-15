@@ -1,0 +1,43 @@
+#!/bin/bash
+##
+## Script for starting abaqus jobs on sophia.dtu.dk
+## Start job: sbatch JobScript
+## List jobs: qstat
+## Delete jobs: qdel JobID
+##
+##SBATCH --job-name=JobName
+
+# uncomment, if you want to specify output and error files explicitly 
+#SBATCH --output=slurm.out
+#SBATCH --error=slurm.err
+
+# notify on state change: BEGIN, END, FAIL or ALL
+##SBATCH --mail-type=END      
+
+# whom to email notifications
+#SBATCH --mail-user=leohe@dtu.dk     
+
+#SBATCH --partition=workq 
+
+# cores = xnodes x 32 cpu/each node = xxx 
+#SBATCH --nodes=1
+
+# is needed when running OpenMPI or to use exclusively, it allocates all cores
+#SBATCH --exclusive 
+
+## not specified = no timelimit, use scancel to remove
+#SBATCH --time=05:00:00
+
+## Commands for starting the jobs
+## Abaqus version 2019 or 2021
+## Abaqus command for running an Abaqus py-file or inp-file
+## Intel fortran compiler
+#####################################################
+module load hpcx/2.4.0/ompi-intel-18.0.2.199
+module load abaqus/2021
+##module load abaqus/2019a
+unset SLURM_GTIDS
+abaqus cae noGUI=Config.py
+## abaqus job=JobName user=OA2D.f cpus=32 inter
+####################################################
+wait
