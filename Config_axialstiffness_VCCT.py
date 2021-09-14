@@ -6,7 +6,7 @@ import numpy as np
 # geometrical definitions
 dr = 0.3
 rhoH = 0.5
-theta = -90.
+theta = -30.
 
 thetaB=math.pi/180.*theta #radians
 

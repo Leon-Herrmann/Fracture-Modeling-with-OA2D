@@ -9,13 +9,13 @@ force_bc = True
 
 # geometrical definitions
 dr = 0.
-rhoH = 0.1#0.05 #0.5 # relates to length of laminate, should be as large as possible -> rhoH as small as possible
+rhoH = 0.1 # relates to length of laminate, should be as large as possible -> rhoH as small as possible
 theta = -45.
 
-thetaB=math.pi/180.*theta #radians
+thetaB=math.pi/180.*theta # radians
 
 # mesh
-nle=0.02 #0.05 # characteristic element length
+nle=0.02 # characteristic element length
 
 # loading 
 Ni = np.array([1e5,0,0]) # [N1, N3, N13] 
@@ -37,7 +37,6 @@ mat = utilities.material(E1=30620., E2=8620., E3=8620.,
 # layup definition
 layup_crack = np.array([1,0,0,0])
 layup_delaminationcrack = np.array([0,0,0,1])
-#layup_angles = np.array([thetaB,0.,-thetaB,0.]) 
 layup_angles = np.array([thetaB,np.pi*0.5,-thetaB,np.pi*0.5]) 
 layup_heights = np.array([1.,1.,1.,1.]) * 0.5
 
@@ -45,7 +44,7 @@ layup_heights = np.array([1.,1.,1.,1.]) * 0.5
 mic = utilities.microstructure(layup_microstructure=np.zeros(len(layup_crack)))
 
 # abaqus model parameters
-UMAT = True # CAN NOT BE TURNED OFF AT THE MOMENT DUE TO A BUG
+UMAT = True 
 
 NameModel='CompModel'
 NameJob='CompJob'
@@ -64,35 +63,31 @@ K1_CLT = Ni[0] / np.sum(layup_heights) / eps[0]
 K3_CLT = Ni[1] / np.sum(layup_heights) / eps[1]
 
 
-# # create the model
-# job0, NameJob0, nle_adjusted0, num_nodes  = LaminateModel.BuildLaminateModel(dr, rhoH, thetaB, mat, load, 
-                                                                           # layup_crack*0, layup_delaminationcrack,
-                                                                           # layup_angles, layup_heights,
-                                                                           # nle, UMAT, mic, force_bc=force_bc,
-                                                                           # crack_left=False,
-                                                                           # symmetry=symmetry, nle_mod=False,
-                                                                           # NameJob=NameJob+'_0')
+# create the model
+job0, NameJob0, nle_adjusted0, num_nodes  = LaminateModel.BuildLaminateModel(dr, rhoH, thetaB, mat, load, 
+                                                                           layup_crack*0, layup_delaminationcrack,
+                                                                           layup_angles, layup_heights,
+                                                                           nle, UMAT, mic, force_bc=force_bc,
+                                                                           crack_left=False,
+                                                                           symmetry=symmetry, nle_mod=False,
+                                                                           NameJob=NameJob+'_0')
 
-# mdb.jobs[NameJob0].submit(consistencyChecking=OFF)
-# job0.waitForCompletion()
+mdb.jobs[NameJob0].submit(consistencyChecking=OFF)
+job0.waitForCompletion()
 
-# job1, NameJob1, nle_adjusted1, num_nodes  = LaminateModel.BuildLaminateModel(dr, rhoH, thetaB, mat, load, 
-                                                                           # layup_crack, layup_delaminationcrack,
-                                                                           # layup_angles, layup_heights,
-                                                                           # nle, UMAT, mic, force_bc=force_bc,
-                                                                           # crack_left=False,
-                                                                           # symmetry=symmetry, nle_mod=False,
-                                                                           # NameJob=NameJob+'_1')
+job1, NameJob1, nle_adjusted1, num_nodes  = LaminateModel.BuildLaminateModel(dr, rhoH, thetaB, mat, load, 
+                                                                           layup_crack, layup_delaminationcrack,
+                                                                           layup_angles, layup_heights,
+                                                                           nle, UMAT, mic, force_bc=force_bc,
+                                                                           crack_left=False,
+                                                                           symmetry=symmetry, nle_mod=False,
+                                                                           NameJob=NameJob+'_1')
          
-# mdb.jobs[NameJob1].submit(consistencyChecking=OFF)
-# job1.waitForCompletion()
+mdb.jobs[NameJob1].submit(consistencyChecking=OFF)
+job1.waitForCompletion()
 
-# G1norm, G2norm = LaminateModel.TunnelCrackEnergyReleaseRate(NameJob0, NameJob1, NameInstance,
-                                                            # thetaB, layup_heights, layup_crack, 
-                                                            # sig_0, eps)
+G1norm, G2norm = LaminateModel.TunnelCrackEnergyReleaseRate(NameJob0, NameJob1, NameInstance,
+                                                            thetaB, layup_heights, layup_crack, 
+                                                            sig_0, eps)
 
-# np.savetxt("Gss.txt",[G1norm,G2norm],delimiter=', ')
-
-
-
-
+np.savetxt("Gss.txt",[G1norm,G2norm],delimiter=', ')

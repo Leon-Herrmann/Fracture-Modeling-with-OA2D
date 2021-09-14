@@ -4,7 +4,7 @@ C==============================modified from Lars Mikkelsen
       parameter(nig=9)   
 C
       integer maxelem,elemshift
-      parameter(maxelem=79311)
+      parameter(maxelem=80)
       real*8 Emodout(nig,maxelem)
       real*8 strain11out(nig,maxelem)
 	  real*8 strain22out(nig,maxelem)

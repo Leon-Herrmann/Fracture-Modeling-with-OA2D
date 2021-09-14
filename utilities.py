@@ -76,13 +76,15 @@ def CLT(layup_angles, layup_heights, mat, N, layup_active):
         if layup_active[i]==0:
             Qtemp[1:3,:]=0
             Qtemp[0,1:3]=0
-            #Qtemp[0,0]=0
+            #Qtemp[0,0]=0 ###############OBS
         Q[i] = np.dot(T[i],np.dot(Qtemp,np.transpose(T[i])))
         
     # Extensional stiffness matrix
     A = np.zeros((3,3))
     for i in range(len(layup_angles)):
         A += Q[i]*layup_heights[i]
+        
+    print(A)
     
     # Strains
     eps = np.zeros((3))
@@ -90,9 +92,8 @@ def CLT(layup_angles, layup_heights, mat, N, layup_active):
     A_inverse = np.linalg.inv(A)
     
     eps = np.dot(A_inverse,N) # global coordinate system
-    sig_0 = np.dot(Q[0],eps) # global coordinate system
-    #sig_0_l = np.dot(np.linalg.inv(T[0]),sig_0) # local coordinate system
-    sig_0_l = np.dot((T[0]),sig_0) # local coordinate system
+    sig_0 = np.dot(Q[1],eps) # global coordinate system
+    sig_0_l = np.dot(np.linalg.inv(T[1]),sig_0) # local coordinate system
 
     return eps, sig_0, sig_0_l
 

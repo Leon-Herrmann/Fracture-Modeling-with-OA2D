@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 symmetry = True
-force_bc = False
+force_bc = True
 
 # loading 
 Ni = np.array([1e5,0,0]) # [N1, N3, N13] 
@@ -29,7 +29,7 @@ layup_angles = np.array([thetaB,0.,-thetaB,0.])
 layup_heights = np.array([1.,1.,1.,1.]) * 0.35
 
 # mesh
-nle=0.05 #0.05 # characteristic element length
+nle=0.05 # characteristic element length
 
 #initial crack density 
 rhoH = 1./2**5 #0.05
@@ -39,7 +39,7 @@ w = 350. # width in mm
 mic = utilities.microstructure(layup_microstructure=np.zeros(len(layup_crack)))
 
 # abaqus model parameters
-UMAT = True # CAN NOT BE TURNED OFF AT THE MOMENT DUE TO A BUG
+UMAT = True 
 
 # Model names
 NameModel='CompModel'
@@ -96,7 +96,6 @@ while True:
     mdb.jobs[NameJob1].submit(consistencyChecking=OFF)
     job1.waitForCompletion()
 
-    # OBS SIMPLIFICATION AT THE MOMENT
     job2, NameJob2, nle_adjusted2, num_nodes  = LaminateModel.BuildLaminateModel(0.05, rhoH, thetaB, mat, load, 
                                                                                layup_crack, layup_delaminationcrack,
                                                                                layup_angles, layup_heights,
@@ -135,7 +134,6 @@ np.savetxt('KTEST.txt',[K1],delimiter=', ')
 np.savetxt('rhoTEST.txt',[rhoH],delimiter=', ')
 dr = 0.05
 for i in range(19):
-    # OBS SIMPLIFICATION AT THE MOMENT
     job2, NameJob2, nle_adjusted2, num_nodes  = LaminateModel.BuildLaminateModel(dr, rhoH, thetaB, mat, load, 
                                                                                layup_crack, layup_delaminationcrack,
                                                                                layup_angles, layup_heights,
@@ -160,20 +158,6 @@ for i in range(19):
     n_array = np.append(n_array,n)
     K1_array = np.append(K1_array,K1)
     
-    
-np.savetxt('Gtc.txt',[G1tc,G2tc],delimiter=', ')
-np.savetxt('Gd.txt',[G1d,G2d,G3d],delimiter=', ')
 np.savetxt('K1.txt',K1_array,delimiter=', ')
-np.savetxt('dU1out',dU1out,delimiter=', ')
-
 np.savetxt('n.txt',n_array,delimiter=', ')
-
-
 np.savetxt('rhoH.txt',[rhoH],delimiter=', ')
-
-
-#np.savetxt("Gss.txt",[G1norm,G2norm],delimiter=', ')
-
-
-# ADJUST RHOH???
-
